@@ -4,8 +4,6 @@ function MixCalendar () {
   var ical = require("ical-generator");
   var icalImporter = require('ical');
 
-
-  var CALENDAR_NAME = "calendar.ics";
   var cal = ical({
     domain: 'comunidadestecnologicas.info',
     prodId: {company: 'comunidadestecnologicas.info', product: 'ical-generator'},
