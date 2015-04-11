@@ -1,8 +1,21 @@
 var fs = require("fs");
-var CALENDAR_NAME = "calendar_break.ics";
+var CALENDAR_NAME = "calendar.ics";
 
-var communities = [
-//"Data-Science-Spain",
+var CALENDAR_NAME = "otro2.ics";
+
+var non_meetup =  [
+  "http://calendario.es.python.org/calendario-madrid.ics",
+  "http://www.madridrb.com/events.ics"
+];
+
+var meetup_communities = [
+//"Data-Science-Spain", // Non-public
+//"Rivas-Tech-Society", // Non-Public
+//"desarrollowebsegovia", // Non-Public
+//"Open-Analytics-Charlas-de-Analitica-de-datos-con-OpenSource", // Wrong description format
+"Hackathon-Lovers",
+"FP-Madrid",
+"FirefoxOS-Madrid",
 "madriagil",
 "madridjs",
 "Hacks-Hackers-Madrid",
@@ -40,15 +53,12 @@ var communities = [
 "Scala-Programming-Madrid",
 "VIM-Madrid",
 "PHPMad",
-"FP-Madrid",
 "Node-js-Madrid",
-"FirefoxOS-Madrid",
 "Factoria-Startup-Idea-viable-Equipo-solido-Beta-Funcional",
 "Ciudad-Real-JS",
 "JDevelopers",
 "Emacs-Madrid",
 "RobotsMadrid",
-"Hackathon-Lovers",
 "PostgreSQL-Espana",
 "Gr2Dest-Grupo-de-estudio-de-seguridad-informatica",
 "canasbloggers",
@@ -56,11 +66,8 @@ var communities = [
 "Designerpills",
 "Madrid-MBaaS-User-Group",
 "Code-Club-Espana",
-"Rivas-Tech-Society",
-"desarrollowebsegovia",
 "go-mad",
 "MAD-for-OpenStack",
-"Open-Analytics-Charlas-de-Analitica-de-datos-con-OpenSource",
 "MadridSUG",
 "InGame",
 "InBounders",
@@ -130,8 +137,12 @@ var communities = [
 "Vaadin-Spain",
 "Wordpress-Enterprise-Madrid",
 "MadridJUG",
-"Mozilla-Meetup"
+"Mozilla-Meetup",
+"Madrid-Drones-Meetup",
+"MadridJUG"
 ];
+
+var communities = non_meetup.concat(meetup_communities);
 
 
 function getCalendar (err, cal ) {
@@ -149,6 +160,7 @@ function writeFile(path, data) {
 }
 
 var MixCalendar = require('./mixCalendar');
-debugger;
+
+
 MixCalendar.get(communities, getCalendar);
 

@@ -3,7 +3,10 @@ function MixCalendar () {
   var Rx = require("rx");
   var ical = require("ical-generator");
   var icalImporter = require('ical');
+  var uri_pattern = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[{};:'".,<>?«»“”‘’]|\]|\?))/ig
 
+
+  var CALENDAR_NAME = "calendar.ics";
   var cal = ical({
     domain: 'comunidadestecnologicas.info',
     prodId: {company: 'comunidadestecnologicas.info', product: 'ical-generator'},
@@ -13,7 +16,11 @@ function MixCalendar () {
 
 
   function getIcalUrls (community) {
-    return "http://www.meetup.com/" + community + "/events/ical/";
+    var url = !community.match(/\.ics/)
+      ? "http://www.meetup.com/" + community + "/events/ical/"
+      : community;
+
+    return url;
   }
 
 
@@ -39,18 +46,42 @@ function MixCalendar () {
     ).flatMap(function (url) {
       return hit(url, {});
     }).filter( function (result) {
-      return !_.isEmpty(result);
+      return validIcs(result);
     }).map( function (result) {
-        return _.filter(_.mapValues(result), { type : "VEVENT" })[0];
+        return _.filter(result , { type: "VEVENT"});
+    }).filter( function (arr) {
+        return !_.isEmpty(arr);
     });
 
+  }
+
+  function validIcs(obj) {
+    return !_.isEmpty(obj) && !_.keys(obj).join("").match(/unauthorized/);
+  }
+
+  function normalizeEvent (obj) {
+
+    var normalized = {};
+    if (_.has(obj,"description") && obj.description.match(/URL/)) {
+      normalized.url = obj.description.match(uri_pattern)[0];
+    }
+    normalized.description = _.has(obj,"description") && obj.description.replace(/\n/g,".");
+    return _.extend(obj,normalized);
+
+  }
+
+  function createEvents (arr) {
+    _.map(arr, function(obj) {
+      normalizeEvent(obj);
+      cal.createEvent(normalizeEvent(obj));
+    });
   }
 
   function watchSeq (obs , cb) {
 
     seq = obs.subscribe(
-      function (obj) {
-        cal.createEvent(obj);
+      function (events) {
+        createEvents(events);
       },
       function (err) {
         cb(true, null);
@@ -64,6 +95,7 @@ function MixCalendar () {
   return {
     get: function( coms, cb) {
       
+      debugger;
       var iCalUrls = _.map(coms, getIcalUrls);
       return watchSeq(CreateSeq(iCalUrls), cb);
     }
