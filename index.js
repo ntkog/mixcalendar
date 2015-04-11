@@ -1,8 +1,6 @@
 var fs = require("fs");
 var CALENDAR_NAME = "calendar.ics";
 
-var CALENDAR_NAME = "otro2.ics";
-
 var non_meetup =  [
   "http://calendario.es.python.org/calendario-madrid.ics",
   "http://www.madridrb.com/events.ics"
