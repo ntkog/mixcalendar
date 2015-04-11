@@ -78,7 +78,7 @@ function MixCalendar () {
     if (_.has(obj,"description") && obj.description.match(/URL/)) {
       normalized.url = obj.description.match(uri_pattern)[0];
     }
-    normalized.description = _.has(obj,"description") && obj.description.replace(/\n/g,".");
+    normalized.description = _.has(obj,"description") && obj.description.replace(/\n/g," ");
     return _.extend(obj,normalized);
 
   }
