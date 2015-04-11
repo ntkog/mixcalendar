@@ -3,8 +3,10 @@ function MixCalendar () {
   var Rx = require("rx");
   var ical = require("ical-generator");
   var icalImporter = require('ical');
+  var moment = require('moment');
   var uri_pattern = /\b((?:[a-z][\w-]+:(?:\/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}\/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[{};:'".,<>?«»“”‘’]|\]|\?))/ig
 
+  var overlap = {};
 
   var CALENDAR_NAME = "calendar.ics";
   var cal = ical({
@@ -23,6 +25,17 @@ function MixCalendar () {
     return url;
   }
 
+
+
+  function store(obj) {
+    var current = moment(obj.start).format("YYYYMMDDHH");
+    if(_.has(overlap, current)) {
+      overlap[current].push(obj.url);
+
+    } else {
+      overlap[current] = [ obj.url ];
+    }
+  }
 
   function CreateSeq ( arrOps ) {
 
@@ -74,6 +87,7 @@ function MixCalendar () {
     _.map(arr, function(obj) {
       normalizeEvent(obj);
       cal.createEvent(normalizeEvent(obj));
+      store(obj);
     });
   }
 
@@ -94,10 +108,19 @@ function MixCalendar () {
   
   return {
     get: function( coms, cb) {
-      
-      debugger;
+
       var iCalUrls = _.map(coms, getIcalUrls);
       return watchSeq(CreateSeq(iCalUrls), cb);
+    },
+    overlapping: function() {
+      debugger;
+      return _.filter( _.map(overlap, function( v,k ) {
+        if (v.length > 1) {
+          return { date : k, events: v};
+        }
+      }), function (obj) {
+        return obj;
+      });
     }
   }
 }

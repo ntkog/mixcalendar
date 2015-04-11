@@ -11,6 +11,7 @@ function getCalendar (err, cal ) {
   }
   else {
     writeFile(CALENDAR_NAME, cal);
+    console.log("%j", MixCalendar.overlapping());
   }
 }
 
