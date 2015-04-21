@@ -28,12 +28,20 @@ function MixCalendar () {
 
 
   function store(obj) {
-    var current = moment(obj.start).format("YYYYMMDDHH");
+    var current = moment(obj.start).format("YYYYMMDD");
     if(_.has(overlap, current)) {
-      overlap[current].push(obj.url);
+      overlap[current].push({
+        url: obj.url,
+        start: obj.start
+      });
 
     } else {
-      overlap[current] = [ obj.url ];
+      overlap[current] = [
+        {
+          url: obj.url,
+          start: obj.start
+        }
+      ];
     }
   }
 
@@ -113,7 +121,6 @@ function MixCalendar () {
       return watchSeq(CreateSeq(iCalUrls), cb);
     },
     overlapping: function() {
-      debugger;
       return _.filter( _.map(overlap, function( v,k ) {
         if (v.length > 1) {
           return { date : k, events: v};

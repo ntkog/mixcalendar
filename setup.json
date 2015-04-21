@@ -1,7 +1,8 @@
 {
   "NonMeetupBased" : [
     "http://calendario.es.python.org/calendario-madrid.ics",
-    "http://www.madridrb.com/events.ics"
+    "http://www.madridrb.com/events.ics",
+    "http://lanyrd.com/places/12578024/12578024.ics"
   ],
   "MeetupBased" : [
 
