@@ -1,4 +1,4 @@
-function MixCalendar () {
+function MixCalendar (calendarName) {
   var _ = require("lodash");
   var Rx = require("rx");
   var ical = require("ical-generator");
@@ -8,18 +8,17 @@ function MixCalendar () {
 
   var overlap = {};
 
-  var CALENDAR_NAME = "calendar.ics";
   var cal = ical({
     domain: 'comunidadestecnologicas.info',
     prodId: {company: 'comunidadestecnologicas.info', product: 'ical-generator'},
-    name: 'Calendario Común',
+    name: calendarName,
     timezone : 'Europe/Madrid'
   });
 
 
   function getIcalUrls (community) {
-    var url = !community.match(/\.ics/)
-      ? "http://www.meetup.com/" + community + "/events/ical/"
+    var url = !(/\.ics/).test(community)
+      ? "https://www.meetup.com/" + community + "/events/ical/"
       : community;
 
     return url;
@@ -67,6 +66,7 @@ function MixCalendar () {
     ).flatMap(function (url) {
       return hit(url, {});
     }).filter( function (result) {
+
       return validIcs(result);
     }).map( function (result) {
         return _.filter(result , { type: "VEVENT"});
@@ -113,7 +113,7 @@ function MixCalendar () {
       }
     );
   }
-  
+
   return {
     get: function( coms, cb) {
 
@@ -132,4 +132,6 @@ function MixCalendar () {
   }
 }
 
-module.exports = MixCalendar();
+module.exports = function(name) {
+  return MixCalendar(name);
+};
